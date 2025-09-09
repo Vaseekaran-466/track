@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8 Weeks Study Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --green: #16a34a;
+            --red: #e63946;
+            --yellow: #ffb703;
+            --card-bg: #ffffff;
+            --bg: #f3f4f6;
+            --radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .subtitle {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+        
+        .progress-container {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 20px;
+            width: 35%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .tab:hover {
+            transform: translateY(-2px);
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .panel {
+            display: none;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .panel.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .panel-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        
+        th, td {
+            padding: 14px 12px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        th {
+            background: #f1f3f5;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .time-col {
+            font-weight: 700;
+            background: #edf2ff;
+            color: var(--primary);
+        }
+        
+        .type-col {
+            font-weight: 600;
+            background: #fff4e6;
+            color: #e67700;
+        }
+        
+        .task-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--green);
+            cursor: pointer;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+        }
+        
+        .btn-danger {
+            background: var(--red);
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .color-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+        
+        .dot-green {
+            background: var(--green);
+        }
+        
+        .dot-gray {
+            background: var(--gray);
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                justify-content: center;
+            }
+            
+            .tab {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calendar-alt"></i> 8 Weeks Study Tracker</h1>
+            <p class="subtitle">MERN + SQL + Aptitude + English + Debugging — Track your progress</p>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-header">
+                <h2>Your Progress</h2>
+                <span>35% Complete</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-stats">
+                <span>Completed: 42/120 tasks</span>
+                <span>Remaining: 78 tasks</span>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-week="1">Week 1</div>
+            <div class="tab" data-week="2">Week 2</div>
+            <div class="tab" data-week="3">Week 3</div>
+            <div class="tab" data-week="4">Week 4</div>
+            <div class="tab" data-week="5">Week 5</div>
+            <div class="tab" data-week="6">Week 6</div>
+            <div class="tab" data-week="7">Week 7</div>
+            <div class="tab" data-week="8">Week 8</div>
+        </div>
+        
+        <div class="panel active" id="panel-1">
+            <h3 class="panel-title">Week 1 – JavaScript + SQL Basics</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Task Type</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                            <th>Sun</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time-col">2:00–2:30</td>
+                            <td class="type-col">English</td>
+                            <td><label class="task-cell"><input type="checkbox"> Intro</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Podcast</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Self Talk</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Mirror</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Topic Talk</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Roleplay</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Review</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">2:30–4:30</td>
+                            <td class="type-col">JavaScript</td>
+                            <td><label class="task-cell"><input type="checkbox"> Variables</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Functions</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Objects</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> DOM Basics</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Events</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> ES6</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Revision</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">4:30–5:00</td>
+                            <td class="type-col">SQL</td>
+                            <td><label class="task-cell"><input type="checkbox"> CREATE</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> SELECT</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> WHERE</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> ORDER BY</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> UPDATE</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> ALTER</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Revision</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">5:00–5:45</td>
+                            <td class="type-col">Debugging</td>
+                            <td><label class="task-cell"><input type="checkbox"> Syntax</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Logic</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> DOM</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Event</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> ES6</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Small Task</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Revise</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">5:45–6:30</td>
+                            <td class="type-col">Aptitude</td>
+                            <td><label class="task-cell"><input type="checkbox"> Percentages</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Ratios</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Time & Work</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Distance</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Profit/Loss</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Averages</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Mock Test</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="panel" id="panel-2">
+            <h3 class="panel-title">Week 2 – JavaScript Advanced + SQL Filtering</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Task Type</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                            <th>Sun</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time-col">2:30–4:30</td>
+                            <td class="type-col">JS Advanced</td>
+                            <td><label class="task-cell"><input type="checkbox"> Callbacks</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Promises</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Async/Await</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Array Methods</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Map/Filter</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Reduce</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Revision</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">4:30–5:00</td>
+                            <td class="type-col">SQL Filtering</td>
+                            <td><label class="task-cell"><input type="checkbox"> LIKE</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> IN</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> BETWEEN</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> DISTINCT</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> LIMIT</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> CASE</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Revision</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">5:00–5:45</td>
+                            <td class="type-col">Debugging</td>
+                            <td><label class="task-cell"><input type="checkbox"> Async Errors</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Promise Errors</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Nested Loops</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Array Bugs</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Logic Bugs</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Small Task</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Revision</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="panel" id="panel-3">
+            <h3 class="panel-title">Week 3 – React Basics + SQL Joins</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Task Type</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                            <th>Sun</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time-col">2:30–4:30</td>
+                            <td class="type-col">React</td>
+                            <td><label class="task-cell"><input type="checkbox"> Intro + Setup</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Components</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Props</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> State</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Events</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> JSX Rules</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> React Revise</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">4:30–5:00</td>
+                            <td class="type-col">SQL Joins</td>
+                            <td><label class="task-cell"><input type="checkbox"> INNER JOIN</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> LEFT JOIN</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> RIGHT JOIN</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> FULL JOIN</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Self Join</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Cross Join</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> SQL Revise</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">5:00–5:45</td>
+                            <td class="type-col">Debugging</td>
+                            <td><label class="task-cell"><input type="checkbox"> Component Errors</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Props Errors</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> State Errors</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Event Errors</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Render Errors</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> React Task</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Debug Revise</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="panel" id="panel-4">
+            <h3 class="panel-title">Week 4 – React Forms + Aggregates</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Task Type</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                            <th>Sun</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time-col">2:30–4:30</td>
+                            <td class="type-col">React Forms</td>
+                            <td><label class="task-cell"><input type="checkbox"> Forms Basics</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Controlled Inputs</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Validation</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Multiple Inputs</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Form Submit</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Error Handling</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Form Revise</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">4:30–5:00</td>
+                            <td class="type-col">SQL Aggregates</td>
+                            <td><label class="task-cell"><input type="checkbox"> COUNT</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> SUM</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> AVG</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> MIN</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> MAX</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> GROUP BY</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> HAVING</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="panel" id="panel-5">
+            <h3 class="panel-title">Week 5 – React Hooks + Node.js Intro + SQL Subqueries</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Task Type</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                            <th>Sun</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time-col">2:30–4:30</td>
+                            <td class="type-col">React Hooks</td>
+                            <td><label class="task-cell"><input type="checkbox"> useState</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> useEffect</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Custom Hooks</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> useRef</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> useReducer</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> useContext</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Hooks Revise</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">4:30–5:00</td>
+                            <td class="type-col">SQL Subqueries</td>
+                            <td><label class="task-cell"><input type="checkbox"> Subqueries</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Nested SELECT</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> IN Subquery</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> NOT IN</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Correlated Query</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> EXISTS/ANY/ALL</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> SQL Revise</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="panel" id="panel-6">
+            <h3 class="panel-title">Week 6 – Node.js + Express + SQL Keys & Constraints</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Task Type</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                            <th>Sun</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time-col">2:30–4:30</td>
+                            <td class="type-col">Node.js / Express</td>
+                            <td><label class="task-cell"><input type="checkbox"> Express Intro</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Routing</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Middleware</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Error Handling</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> REST API</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> CRUD API</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Revise</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">4:30–5:00</td>
+                            <td class="type-col">SQL Keys</td>
+                            <td><label class="task-cell"><input type="checkbox"> Primary Key</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Foreign Key</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Composite Key</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Unique Key</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Not Null</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Index / Constraints</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> SQL Revise</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="panel" id="panel-7">
+            <h3 class="panel-title">Week 7 – MongoDB + Advanced SQL</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Task Type</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                            <th>Sun</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time-col">2:30–4:30</td>
+                            <td class="type-col">MongoDB</td>
+                            <td><label class="task-cell"><input type="checkbox"> Intro + Setup</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Insert Docs</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Find Docs</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Update Docs</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Delete Docs</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Operators</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Mongo Revise</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">4:30–5:00</td>
+                            <td class="type-col">SQL Advanced</td>
+                            <td><label class="task-cell"><input type="checkbox"> Window Functions</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> RANK()</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> DENSE_RANK()</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> ROW_NUMBER()</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> LEAD()/LAG()</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Union / Views</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Advanced Revise</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="panel" id="panel-8">
+            <h3 class="panel-title">Week 8 – Integration + Placement Prep</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Task Type</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                            <th>Sun</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time-col">2:30–4:30</td>
+                            <td class="type-col">Fullstack</td>
+                            <td><label class="task-cell"><input type="checkbox"> Connect React + API</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> CRUD with Mongo</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> JWT Auth</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Middleware</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Mini Project</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Final Project</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Project Revise</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">4:30–5:00</td>
+                            <td class="type-col">SQL Revise</td>
+                            <td colspan="7"><label class="task-cell"><input type="checkbox"> Full revision – write 30 queries / Joins / Subqueries / Aggregates</label></td>
+                        </tr>
+                        <tr>
+                            <td class="time-col">6:30–7:45</td>
+                            <td class="type-col">Coding</td>
+                            <td><label class="task-cell"><input type="checkbox"> Integration Task</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Deployment</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Bug Fixing</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> API Handling</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> UI Fixing</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Final Touch</label></td>
+                            <td><label class="task-cell"><input type="checkbox"> Full Revise</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" id="saveBtn">
+                <i class="fas fa-save"></i> Save Progress
+            </button>
+            <button class="btn btn-secondary" id="resetBtn">
+                <i class="fas fa-redo"></i> Reset Week
+            </button>
+            <button class="btn btn-danger" id="clearBtn">
+                <i class="fas fa-trash"></i> Clear All
+            </button>
+        </div>
+        
+        <footer>
+            <p>Your progress is automatically saved to your browser's local storage</p>
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="color-dot dot-green"></span>
+                    <span>Completed</span>
+                </div>
+                <div class="legend-item">
+                    <span class="color-dot dot-gray"></span>
+                    <span>Not Started</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabs = document.querySelectorAll('.tab');
+            const panels = document.querySelectorAll('.panel');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and panels
+                    tabs.forEach(t => t.classList.remove('active'));
+                    panels.forEach(p => p.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    // Show corresponding panel
+                    const week = tab.getAttribute('data-week');
+                    document.getElementById(`panel-${week}`).classList.add('active');
+                });
+            });
+            
+            // Load saved progress from localStorage
+            loadProgress();
+            
+            // Set up event listeners for buttons
+            document.getElementById('saveBtn').addEventListener('click', saveProgress);
+            document.getElementById('resetBtn').addEventListener('click', resetWeek);
+            document.getElementById('clearBtn').addEventListener('click', clearAll);
+            
+            // Update progress when checkboxes are changed
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', updateProgress);
+            });
+            
+            // Initial progress update
+            updateProgress();
+        });
+        
+        function saveProgress() {
+            const progress = {};
+            
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                progress[checkbox.parentElement.textContent.trim()] = checkbox.checked;
+            });
+            
+            localStorage.setItem('studyProgress', JSON.stringify(progress));
+            alert('Progress saved successfully!');
+        }
+        
+        function loadProgress() {
+            const savedProgress = localStorage.getItem('studyProgress');
+            
+            if (savedProgress) {
+                const progress = JSON.parse(savedProgress);
+                
+                document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    const task = checkbox.parentElement.textContent.trim();
+                    if (progress.hasOwnProperty(task)) {
+                        checkbox.checked = progress[task];
+                    }
+                });
+                
+                updateProgress();
+            }
+        }
+        
+        function resetWeek() {
+            const activePanel = document.querySelector('.panel.active');
+            activePanel.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateProgress();
+            alert('Week progress has been reset');
+        }
+        
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all progress? This cannot be undone.')) {
+                document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                localStorage.removeItem('studyProgress');
+                updateProgress();
+                alert('All progress has been cleared');
+            }
+        }
+        
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const total = checkboxes.length;
+            const completed = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+            const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            // Update progress bar
+            document.querySelector('.progress-fill').style.width = `${percentage}%`;
+            document.querySelector('.progress-header span').textContent = `${percentage}% Complete`;
+            document.querySelector('.progress-stats span:first-child').textContent = `Completed: ${completed}/${total} tasks`;
+            document.querySelector('.progress-stats span:last-child').textContent = `Remaining: ${total - completed} tasks`;
+        }
+    </script>
+</body>
+</html>
